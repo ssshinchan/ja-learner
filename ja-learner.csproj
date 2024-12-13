@@ -10,14 +10,16 @@
     <_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
-	<MeCabUseDefaultDictionary>True</MeCabUseDefaultDictionary>
+    <MeCabUseDefaultDictionary>True</MeCabUseDefaultDictionary>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="MeCab.DotNet" Version="1.2.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1774.30" />
-    <PackageReference Include="OpenAI" Version="1.7.2" />
+    <PackageReference Include="OpenAI" Version="1.11.0" />
+    <PackageReference Include="Markdig"  Version="0.30.4" />
   </ItemGroup>
 
   <ItemGroup>

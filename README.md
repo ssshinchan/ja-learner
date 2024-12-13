@@ -76,6 +76,7 @@
 "GPT": {
     "ApiKey": "sk-xxx",
     "ApiUrl": "https://api.openai.com/{0}/{1}", // 实际调用为https://api.openai.com/v1/chat/completions
+    "Model": "gpt-4o-mini", // 设置模型
     "ExtraPromptDir": "extra_prompts",		// 额外的Prompt，比如指定某些角色名字怎么翻译
     "TranslatePrompt": "...",			// 翻译Prompt
     "ExplainPrompt": "..."			// 分析Prompt

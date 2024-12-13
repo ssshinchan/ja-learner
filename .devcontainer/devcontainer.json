@@ -1,0 +1,27 @@
+{
+  "name": "JA Learner Development",
+  "image": "mcr.microsoft.com/dotnet/sdk:6.0",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    },
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "postCreateCommand": "dotnet restore && npm install -g @vue/cli",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.vscode-dotnet-runtime",
+        "Vue.volar",
+        "dbaeumer.vscode-eslint",
+        "ms-vscode.powershell"
+      ]
+    }
+  },
+  "forwardPorts": [
+    5000,
+    5001,
+    8080
+  ]
+}
