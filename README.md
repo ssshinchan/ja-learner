@@ -77,6 +77,10 @@
     "ApiKey": "sk-xxx",
     "ApiUrl": "https://api.openai.com/{0}/{1}", // 实际调用为https://api.openai.com/v1/chat/completions
     "Model": "gpt-4o-mini", // 设置模型
+    "TtsApiKey": "", // 可以单独设置OpenAI AI文字转语音key,适用于不同key价格更便宜的场景,不设置的话仍用上面的配置
+    "TtsApiUrl": "", // 单独的TTS API URL
+    "Voice": "shimmer", // 发声角色,可选值为alloy,ash,coral,echo,fable,onyx,nova,sage,shimmer
+    "VoiceSpeed": "1.0", // OpenAI TTS语速
     "ExtraPromptDir": "extra_prompts",		// 额外的Prompt，比如指定某些角色名字怎么翻译
     "TranslatePrompt": "...",			// 翻译Prompt
     "ExplainPrompt": "..."			// 分析Prompt

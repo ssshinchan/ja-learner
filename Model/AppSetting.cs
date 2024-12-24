@@ -13,9 +13,11 @@ public class GPTOptions
 {
     public string ApiKey { get; set; } = string.Empty;
     public string ApiUrl { get; set; } = string.Empty;
-
+    public string TtsApiKey { get; set; } = string.Empty;
+    public string TtsApiUrl { get; set; } = string.Empty;
+    public string Voice { get; set; } = string.Empty;
+    public double VoiceSpeed { get; set; } = 1.0;
     public string Model { get; set; } = string.Empty;
-
     public string ExtraPromptDir { get; set; } = string.Empty;
     public string TranslatePrompt { get; set; } = string.Empty;
     public string ExplainPrompt { get; set; } = string.Empty;

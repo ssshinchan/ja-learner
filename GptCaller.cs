@@ -7,13 +7,18 @@ namespace ja_learner
     internal class GptCaller
     {
         private static OpenAIAPI api;
-
+        private static OpenAIAPI ttsApi;
         private static IHttpClientFactory defaultFactory;
         private static IHttpClientFactory proxyFactory;
 
         public static void Initialize()
         {
             api = new(Program.APP_SETTING.GPT.ApiKey) { ApiUrlFormat = Program.APP_SETTING.GPT.ApiUrl };
+            ttsApi = api;
+            if (Program.APP_SETTING.GPT.TtsApiKey != string.Empty || Program.APP_SETTING.GPT.TtsApiUrl != string.Empty)
+            {
+                ttsApi = new(Program.APP_SETTING.GPT.TtsApiKey) { ApiUrlFormat = Program.APP_SETTING.GPT.TtsApiUrl };
+            }
             defaultFactory = api.HttpClientFactory;
             proxyFactory = new MyHttpClientFactory(Program.APP_SETTING.HttpProxy);
         }
@@ -23,10 +28,12 @@ namespace ja_learner
             if (useProxy)
             {
                 api.HttpClientFactory = proxyFactory;
+                ttsApi.HttpClientFactory = proxyFactory;
             }
             else
             {
                 api.HttpClientFactory = defaultFactory;
+                ttsApi.HttpClientFactory = defaultFactory;
             }
         }
 
@@ -54,6 +61,12 @@ namespace ja_learner
             }
             conversation.AppendUserInput($"{text}");
             return conversation;
+        }
+
+        public static Task<Stream> CreateTextToSpeechStream(string text)
+        {
+            return ttsApi.TextToSpeech.GetSpeechAsStreamAsync(
+                text, Program.APP_SETTING.GPT.Voice, Program.APP_SETTING.GPT.VoiceSpeed);
         }
 
         private static void AddExtraSystemPrompt(Conversation conversation)

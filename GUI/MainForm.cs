@@ -1,6 +1,7 @@
 ﻿using Microsoft.Web.WebView2.Core;
 using System.Diagnostics;
 using Microsoft.VisualBasic;
+using NAudio.Wave;
 
 namespace ja_learner
 {
@@ -12,6 +13,7 @@ namespace ja_learner
 
         TextAnalyzer textAnalyzer = new TextAnalyzer();
         private string sentence = "";
+        private Stream audioStream = null;
         private bool immersiveMode = false;
         public bool ImmersiveMode
         {
@@ -24,7 +26,7 @@ namespace ja_learner
                     tabControl.Hide();
                     panel1.Hide();
                     FormBorderStyle = FormBorderStyle.None;
-                    MinimumSize = new Size(0,0);
+                    MinimumSize = new Size(0, 0);
                 }
                 else
                 {
@@ -43,6 +45,7 @@ namespace ja_learner
             set
             {
                 sentence = value;
+                audioStream = null;
                 dictForm.UpdateTranslationPanelText(sentence);
                 UpdateMecabResult(RunMecab());
                 if (checkBoxAutoTranslate.Checked)
@@ -88,7 +91,7 @@ namespace ja_learner
             dictForm.Show();
             dictForm.Hide();
             UpdateExtraPromptCombobox();
-            
+
             // 初始化 MainForm
             if (Program.APP_SETTING.HttpProxy != string.Empty)
             {
@@ -436,6 +439,30 @@ namespace ja_learner
         {
             UserConfig.UseProxy = checkBoxUseProxy.Checked;
             GptCaller.SetProxy(UserConfig.UseProxy);
+        }
+
+        private async void buttonRead_Click(object sender, EventArgs e)
+        {
+            buttonRead.Text = "朗读(请求中)";
+            if (audioStream == null)
+            {
+                audioStream = await GptCaller.CreateTextToSpeechStream(sentence);
+            }
+
+            buttonRead.Text = "朗读(播放中)";
+            using (var mp3Reader = new Mp3FileReader(audioStream))
+            using (var waveOut = new WaveOutEvent())
+            {
+                waveOut.Init(mp3Reader);
+                waveOut.Play();
+                while (waveOut.PlaybackState == PlaybackState.Playing)
+                {
+                    await Task.Delay(100);
+                }
+            }
+
+            audioStream.Position = 0;
+            buttonRead.Text = "朗读";
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace ja_learner
+﻿﻿﻿﻿namespace ja_learner
 {
     partial class MainForm
     {
@@ -49,6 +49,7 @@
             comboBoxTranslator = new ComboBox();
             checkBoxTranslateKatakana = new CheckBox();
             checkBoxAutoTranslate = new CheckBox();
+            buttonRead = new Button();
             buttonTranslate = new Button();
             buttonShowDictForm = new Button();
             btnInputText = new Button();
@@ -232,6 +233,7 @@
             panel1.Controls.Add(comboBoxTranslator);
             panel1.Controls.Add(checkBoxTranslateKatakana);
             panel1.Controls.Add(checkBoxAutoTranslate);
+            panel1.Controls.Add(buttonRead);
             panel1.Controls.Add(buttonTranslate);
             panel1.Controls.Add(buttonShowDictForm);
             panel1.Controls.Add(btnInputText);
@@ -286,6 +288,16 @@
             buttonTranslate.Text = "翻译";
             buttonTranslate.UseVisualStyleBackColor = true;
             buttonTranslate.Click += buttonTranslate_Click;
+
+            // 朗读按钮
+            buttonRead.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonRead.Location = new Point(180, 5);
+            buttonRead.Name = "buttonRead";
+            buttonRead.Size = new Size(80, 27);
+            buttonRead.TabIndex = 13;
+            buttonRead.Text = "朗读";
+            buttonRead.UseVisualStyleBackColor = true;
+            buttonRead.Click += buttonRead_Click;
             // 
             // buttonShowDictForm
             // 
@@ -343,6 +355,7 @@
         #endregion
         private System.Windows.Forms.Timer timerWindowAttach;
         private System.Windows.Forms.Timer timerSelectWindow;
+        private Button buttonRead;
         private TabPage tabPageSettings;
         private TabPage tabPageText;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView;
