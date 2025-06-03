@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             textBoxSentence = new TextBox();
-            textBoxResult = new TextBox();
+            webBrowserResult = new WebBrowser();
             buttonInterpret = new Button();
             SuspendLayout();
             // 
@@ -43,17 +43,14 @@
             textBoxSentence.Size = new Size(545, 76);
             textBoxSentence.TabIndex = 0;
             // 
-            // textBoxResult
+            // webBrowserResult
             // 
-            textBoxResult.AcceptsReturn = true;
-            textBoxResult.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            textBoxResult.Font = new Font("Microsoft YaHei UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            textBoxResult.Location = new Point(3, 114);
-            textBoxResult.Multiline = true;
-            textBoxResult.Name = "textBoxResult";
-            textBoxResult.ScrollBars = ScrollBars.Vertical;
-            textBoxResult.Size = new Size(545, 153);
-            textBoxResult.TabIndex = 2;
+            webBrowserResult.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            webBrowserResult.Location = new Point(3, 114);
+            webBrowserResult.Name = "webBrowserResult";
+            webBrowserResult.Size = new Size(545, 153);
+            webBrowserResult.TabIndex = 2;
+            webBrowserResult.DocumentText = getHtmlTemplate();
             // 
             // buttonInterpret
             // 
@@ -71,7 +68,7 @@
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(buttonInterpret);
-            Controls.Add(textBoxResult);
+            Controls.Add(webBrowserResult);
             Controls.Add(textBoxSentence);
             Name = "TranslationPanel";
             Size = new Size(551, 270);
@@ -81,8 +78,35 @@
 
         #endregion
 
+        private string getHtmlTemplate()
+        {
+            return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ 
+            font-family: 'Microsoft YaHei UI', Arial, sans-serif;
+            font-size: 20px;
+        }}
+        h1, h2, h3, h4, h5, h6, p, ol {{ 
+            margin-top: 0;
+            margin-bottom: 0;
+        }}
+    </style>
+    <script>
+        function setMarkdown(markdown) {{
+            document.body.innerHTML = markdown;
+        }}
+    </script>
+</head>
+<body>
+</body>
+</html>";
+        }
+
         private TextBox textBoxSentence;
-        private TextBox textBoxResult;
+        private WebBrowser webBrowserResult;
         private Button buttonInterpret;
     }
 }

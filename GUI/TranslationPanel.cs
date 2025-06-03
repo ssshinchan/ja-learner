@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Net.Mime.MediaTypeNames;
+using Markdig;
+using System.Web;
 
 namespace ja_learner.GUI
 {
@@ -27,13 +29,14 @@ namespace ja_learner.GUI
 
         private void buttonInterpret_Click(object sender, EventArgs e)
         {
-            textBoxResult.Text = "";
+            var markdownContent = "";
             buttonInterpret.Enabled = false;
             var chat = GptCaller.CreateInterpretConversation(textBoxSentence.Text);
+
             GptCaller.StreamResponse(chat, res =>
             {
-                textBoxResult.Text += res.Replace("\n", "\r\n");
-                textBoxResult.ScrollToCaret();
+                markdownContent += res;
+                webBrowserResult.Document.InvokeScript("setMarkdown", new object[] { Markdown.ToHtml(markdownContent) });
             });
 
             buttonInterpret.Enabled = true;
