@@ -13,7 +13,7 @@ namespace ja_learner
 
         TextAnalyzer textAnalyzer = new TextAnalyzer();
         private string sentence = "";
-        private Stream audioStream = null;
+        private BinaryData audioStream = null;
         private bool immersiveMode = false;
         public bool ImmersiveMode
         {
@@ -79,6 +79,7 @@ namespace ja_learner
 #if DEBUG
             webView.Source = new Uri("http://localhost:5173/"); // dev
             Text += " - Debug -";
+            buttonDebug.Show();
 #else
             // 初始化 HTTP 服务器
             HttpServer.StartServer();
@@ -315,9 +316,8 @@ namespace ja_learner
         {
             if (comboBoxTranslator.Text == "ChatGPT")
             {
-                var chat = GptCaller.CreateTranslateConversation(sentence);
                 ClearTranslationText();
-                GptCaller.StreamResponse(chat, res => AppendTranslationText(res));
+                GptCaller.CreateTranslateConversation(sentence, AppendTranslationText);
             }
             else if (comboBoxTranslator.Text == "谷歌生草机")
             {
@@ -446,11 +446,12 @@ namespace ja_learner
             buttonRead.Text = "朗读(请求中)";
             if (audioStream == null)
             {
-                audioStream = await GptCaller.CreateTextToSpeechStream(sentence);
+                audioStream = (await GptCaller.Speech(sentence)).Value;
             }
 
             buttonRead.Text = "朗读(播放中)";
-            using (var mp3Reader = new Mp3FileReader(audioStream))
+            using (var stream = new MemoryStream(audioStream.ToArray()))
+            using (var mp3Reader = new Mp3FileReader(stream))
             using (var waveOut = new WaveOutEvent())
             {
                 waveOut.Init(mp3Reader);
@@ -459,10 +460,16 @@ namespace ja_learner
                 {
                     await Task.Delay(100);
                 }
+                stream.Position = 0;
             }
 
-            audioStream.Position = 0;
             buttonRead.Text = "朗读";
+        }
+
+        private void buttonDebug_Click(object sender, EventArgs e)
+        {
+            Debug.WriteLine("Debug");
+            GptCaller.Chat("", "test", s => Debug.Write(s));
         }
     }
 }

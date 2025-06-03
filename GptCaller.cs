@@ -1,113 +1,88 @@
-﻿using OpenAI_API;
-using OpenAI_API.Chat;
-using System.Net;
+﻿using OpenAI;
+using OpenAI.Chat;
+using OpenAI.Audio;
+using System.ClientModel;
+using System.Diagnostics;
 
 namespace ja_learner
 {
     internal class GptCaller
     {
-        private static OpenAIAPI api;
-        private static OpenAIAPI ttsApi;
-        private static IHttpClientFactory defaultFactory;
-        private static IHttpClientFactory proxyFactory;
+        private static OpenAIClient client;
+        private static OpenAIClient ttsClient;
 
         public static void Initialize()
         {
-            api = new(Program.APP_SETTING.GPT.ApiKey) { ApiUrlFormat = Program.APP_SETTING.GPT.ApiUrl };
-            ttsApi = api;
+            OpenAIClientOptions options = new()
+            {
+                Endpoint = new Uri(Program.APP_SETTING.GPT.ApiUrl)
+            };
+            Debug.WriteLine(Program.APP_SETTING.GPT.ApiUrl);
+            client = ttsClient = new(
+                new ApiKeyCredential(Program.APP_SETTING.GPT.ApiKey),
+                options
+            );
+
             if (Program.APP_SETTING.GPT.TtsApiKey != string.Empty || Program.APP_SETTING.GPT.TtsApiUrl != string.Empty)
             {
-                ttsApi = new(Program.APP_SETTING.GPT.TtsApiKey) { ApiUrlFormat = Program.APP_SETTING.GPT.TtsApiUrl };
+                OpenAIClientOptions ttsOptions = new()
+                {
+                    Endpoint = new Uri(Program.APP_SETTING.GPT.TtsApiUrl)
+                };
+                ttsClient = new(
+                    new ApiKeyCredential(Program.APP_SETTING.GPT.TtsApiKey),
+                    ttsOptions
+                );
             }
-            defaultFactory = api.HttpClientFactory;
-            proxyFactory = new MyHttpClientFactory(Program.APP_SETTING.HttpProxy);
         }
 
         public static void SetProxy(bool useProxy)
         {
             if (useProxy)
             {
-                api.HttpClientFactory = proxyFactory;
-                ttsApi.HttpClientFactory = proxyFactory;
+
             }
             else
             {
-                api.HttpClientFactory = defaultFactory;
-                ttsApi.HttpClientFactory = defaultFactory;
+
             }
         }
-
-        public static Conversation CreateTranslateConversation(string text)
+        public static Task<ClientResult<BinaryData>> Speech(string text)
         {
-            Conversation conversation = api.Chat.CreateConversation();
-            conversation.Model = Program.APP_SETTING.GPT.Model;
-            conversation.AppendSystemMessage(Program.APP_SETTING.GPT.TranslatePrompt);
-            if (UserConfig.useExtraPrompt)
-            {
-                AddExtraSystemPrompt(conversation);
-            }
-            conversation.AppendUserInput($"{text}");
-            return conversation;
+            return client.GetAudioClient("tts-1").GenerateSpeechAsync(text, Program.APP_SETTING.GPT.Voice);
         }
 
-        public static Conversation CreateInterpretConversation(string text)
+        public static async void Chat(string systemPrompt, string userPrompt, Action<string> streamCallback)
         {
-            Conversation conversation = api.Chat.CreateConversation();
-            conversation.Model = Program.APP_SETTING.GPT.Model;
-            conversation.AppendSystemMessage(Program.APP_SETTING.GPT.ExplainPrompt);
-            if (UserConfig.useExtraPrompt)
+            ChatClient chatClient = client.GetChatClient(Program.APP_SETTING.GPT.Model);
+            AsyncCollectionResult<StreamingChatCompletionUpdate> completionUpdates = chatClient.CompleteChatStreamingAsync(systemPrompt + "\n" + userPrompt);
+            await foreach (StreamingChatCompletionUpdate completionUpdate in completionUpdates)
             {
-                AddExtraSystemPrompt(conversation);
-            }
-            conversation.AppendUserInput($"{text}");
-            return conversation;
-        }
-
-        public static Task<Stream> CreateTextToSpeechStream(string text)
-        {
-            return ttsApi.TextToSpeech.GetSpeechAsStreamAsync(
-                text, Program.APP_SETTING.GPT.Voice, Program.APP_SETTING.GPT.VoiceSpeed);
-        }
-
-        private static void AddExtraSystemPrompt(Conversation conversation)
-        {
-            if (UserConfig.ExtraPrompt.Length > 0)
-            {
-                conversation.AppendSystemMessage(UserConfig.ExtraPrompt);
-            }
-        }
-
-        async public static void StreamResponse(Conversation conversation, Action<string> callback)
-        {
-            try
-            {
-                await foreach (var res in conversation.StreamResponseEnumerableFromChatbotAsync())
+                if (completionUpdate.ContentUpdate.Count > 0)
                 {
-                    callback(res);
+                    streamCallback(completionUpdate.ContentUpdate[0].Text);
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
         }
-    }
 
-    class MyHttpClientFactory : IHttpClientFactory
-    {
-        private string proxy;
-        public MyHttpClientFactory(string proxy)
+        public static async void CreateTranslateConversation(string userPrompt, Action<string> streamCallback)
         {
-            this.proxy = proxy;
-        }
-        HttpClient IHttpClientFactory.CreateClient(string name)
-        {
-            HttpClientHandler handler = new HttpClientHandler()
+            string systemPrompt = Program.APP_SETTING.GPT.TranslatePrompt;
+            if (UserConfig.useExtraPrompt)
             {
-                Proxy = new WebProxy($"http://{proxy}")
-            };
-            var client = new HttpClient(handler);
-            return client;
+                systemPrompt += UserConfig.ExtraPrompt;
+            }
+            Chat(systemPrompt, userPrompt, streamCallback);
+        }
+
+        public static async void CreateInterpretConversation(string userPrompt, Action<string> streamCallback)
+        {
+            string systemPrompt = Program.APP_SETTING.GPT.ExplainPrompt;
+            if (UserConfig.useExtraPrompt)
+            {
+                systemPrompt += UserConfig.ExtraPrompt;
+            }
+            Chat(systemPrompt, userPrompt, streamCallback);
         }
     }
 

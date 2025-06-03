@@ -1,17 +1,4 @@
-﻿using OpenAI_API;
-using OpenAI_API.Chat;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Net.Mime.MediaTypeNames;
-using Markdig;
-using System.Web;
+﻿using Markdig;
 
 namespace ja_learner.GUI
 {
@@ -31,9 +18,7 @@ namespace ja_learner.GUI
         {
             var markdownContent = "";
             buttonInterpret.Enabled = false;
-            var chat = GptCaller.CreateInterpretConversation(textBoxSentence.Text);
-
-            GptCaller.StreamResponse(chat, res =>
+            GptCaller.CreateInterpretConversation(textBoxSentence.Text, res =>
             {
                 markdownContent += res;
                 webBrowserResult.Document.InvokeScript("setMarkdown", new object[] { Markdown.ToHtml(markdownContent) });

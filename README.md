@@ -13,8 +13,6 @@
     </a>
 </div>
 
-
-
 ## 功能介绍
 
 * **语句分析**：用不同样式区分句子成分，为句子中的汉字注音
@@ -24,7 +22,6 @@
 * **游戏文本分析**：吸附并跟随游戏窗口，配合文本提取工具，实时分析游戏文本
 * **AI 讲解**：调用 ChatGPT 讲解句子中的单词和语法成分
 * **添加 Anki 卡片**：快速添加单词卡片，打造自己的单词本
-
 
 ## 使用说明
 
@@ -44,7 +41,6 @@
   * 点击链接跳转至对应的词典网站
 
 ![demo](README/demo.gif)
-
 
 ### 窗口吸附
 
@@ -80,7 +76,6 @@
     "TtsApiKey": "", // 可以单独设置OpenAI AI文字转语音key,适用于不同key价格更便宜的场景,不设置的话仍用上面的配置
     "TtsApiUrl": "", // 单独的TTS API URL
     "Voice": "shimmer", // 发声角色,可选值为alloy,ash,coral,echo,fable,onyx,nova,sage,shimmer
-    "VoiceSpeed": "1.0", // OpenAI TTS语速
     "ExtraPromptDir": "extra_prompts",		// 额外的Prompt，比如指定某些角色名字怎么翻译
     "TranslatePrompt": "...",			// 翻译Prompt
     "ExplainPrompt": "..."			// 分析Prompt
@@ -111,12 +106,12 @@ Anki 是一款经典的记忆卡片软件，它的设计理念影响了很多背
 "AnkiEnabled": true,
 "Anki": {
     "AnkiConnectUrl": "http://127.0.0.1:8765", // AnkiConnect 默认端口
-    "Deck": "test",			// 添加卡片的目标牌组
-    "Model": "ja-learner",		// 卡片的模板名
-    "FieldNames":{			// 模板中的字段
-        "Word": "单词",			// 存储单词的字段名
-        "Example": "例句",		// 存储例句的字段名
-        "Explain": "解释"		// 存储解释的字段名
+    "Deck": "test",            // 添加卡片的目标牌组
+    "Model": "ja-learner",        // 卡片的模板名
+    "FieldNames":{            // 模板中的字段
+        "Word": "单词",            // 存储单词的字段名
+        "Example": "例句",        // 存储例句的字段名
+        "Explain": "解释"        // 存储解释的字段名
     }
 }
 ```
@@ -131,7 +126,6 @@ Anki 是一款经典的记忆卡片软件，它的设计理念影响了很多背
   - 编辑卡牌模板的显示方式，比如把单词和例句显示在正面，解释显示在背面
 - 将 `Deck` 以及下面的几项修改为对应的牌组名称、模板名称、字段名称。
   - 注意核对牌组与字段名称，如果牌组/模板/字段不存在，或者名称不一致，将无法添加卡片。
-
 
 完成配置后只要在词典页面点击“添加到Anki”，就可以一键将当前文本例句、MOJi 单词和解释创建为新卡片，添加到卡组中。
 
@@ -155,18 +149,20 @@ Anki 是一款经典的记忆卡片软件，它的设计理念影响了很多背
 2. **打开远程容器**：点击左下角的绿色按钮（通常显示为 "><" 或 "打开远程窗口"），然后选择 "Reopen in Container"。(确保Docker已安装并运行, )
 3. **等待容器构建**：VS Code 会自动下载并构建 devcontainer，这可能需要一些时间。
 4. **运行编译命令**：
-     ```bash
-     dotnet publish ja-learner.sln -c Release -r win-x64 --self-contained
-     ```
+   
+   ```bash
+   dotnet publish ja-learner.sln -c Release -r win-x64 --self-contained
+   ```
 5. **构建 Vue.js 项目**：
-     ```bash
-     cd ..
-     git clone https://github.com/ks233/ja-learner-webview
-     cd ja-learner-webview
-     npm install
-     npm run build
-     mv dist ../ja-learner/bin/Release/net6.0-windows/win-x64
-     ```
+   
+   ```bash
+   cd ..
+   git clone https://github.com/ks233/ja-learner-webview
+   cd ja-learner-webview
+   npm install
+   npm run build
+   mv dist ../ja-learner/bin/Release/net6.0-windows/win-x64
+   ```
 6. **完成编译**：编译完成后，你可以在 `bin/Release/net6.0-windows/win-x64` 目录下找到编译后的exe可执行文件。
 
 ## 相关项目
@@ -178,7 +174,7 @@ v0.4 更新了添加 Anki 卡片的功能，想法来源于 [2DIPW/novel2anki](h
 使用的第三方工具与参考资料：
 
 * 形态分析：[taku910/mecab](https://github.com/taku910/mecab) 的 .Net 移植版本 [kekyo/MeCab.DotNet](https://github.com/kekyo/MeCab.DotNet)
-* ChatGPT：[OkGoDoIt/OpenAI-API-dotnet](https://github.com/OkGoDoIt/OpenAI-API-dotnet)
+* ChatGPT：[openai/openai-dotnet](https://github.com/openai/openai-dotnet)
 * [前端页面](https://github.com/ks233/ja-learner-webview)：[WebView2 控件](https://www.nuget.org/packages/Microsoft.Web.WebView2)，Vite + Vue
 * 单词搜索：[MOJi 辞書](https://www.mojidict.com/)
 * 谷歌翻译：参考了 [FilipePS/Traduzir-paginas-web](https://github.com/FilipePS/Traduzir-paginas-web) 的 API 调用方式
@@ -188,7 +184,9 @@ v0.4 更新了添加 Anki 卡片的功能，想法来源于 [2DIPW/novel2anki](h
 ## 贡献者
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+
 <!-- prettier-ignore-start -->
+
 <!-- markdownlint-disable -->
 
 <table>
@@ -202,6 +200,7 @@ v0.4 更新了添加 Anki 卡片的功能，想法来源于 [2DIPW/novel2anki](h
 </table>
 
 <!-- markdownlint-restore -->
+
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
