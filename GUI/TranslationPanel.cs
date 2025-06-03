@@ -1,4 +1,6 @@
-﻿namespace ja_learner.GUI
+﻿using Markdig;
+
+namespace ja_learner.GUI
 {
     public partial class TranslationPanel : UserControl
     {
