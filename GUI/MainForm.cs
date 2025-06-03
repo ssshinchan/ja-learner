@@ -24,7 +24,7 @@ namespace ja_learner
                     tabControl.Hide();
                     panel1.Hide();
                     FormBorderStyle = FormBorderStyle.None;
-                    MinimumSize = new Size(0,0);
+                    MinimumSize = new Size(0, 0);
                 }
                 else
                 {
@@ -76,6 +76,7 @@ namespace ja_learner
 #if DEBUG
             webView.Source = new Uri("http://localhost:5173/"); // dev
             Text += " - Debug -";
+            buttonDebug.Show();
 #else
             // 初始化 HTTP 服务器
             HttpServer.StartServer();
@@ -88,7 +89,7 @@ namespace ja_learner
             dictForm.Show();
             dictForm.Hide();
             UpdateExtraPromptCombobox();
-            
+
             // 初始化 MainForm
             if (Program.APP_SETTING.HttpProxy != string.Empty)
             {
@@ -312,9 +313,8 @@ namespace ja_learner
         {
             if (comboBoxTranslator.Text == "ChatGPT")
             {
-                var chat = GptCaller.CreateTranslateConversation(sentence);
                 ClearTranslationText();
-                GptCaller.StreamResponse(chat, res => AppendTranslationText(res));
+                GptCaller.CreateTranslateConversation(sentence, AppendTranslationText);
             }
             else if (comboBoxTranslator.Text == "谷歌生草机")
             {
@@ -436,6 +436,12 @@ namespace ja_learner
         {
             UserConfig.UseProxy = checkBoxUseProxy.Checked;
             GptCaller.SetProxy(UserConfig.UseProxy);
+        }
+
+        private void buttonDebug_Click(object sender, EventArgs e)
+        {
+            Debug.WriteLine("Debug");
+            GptCaller.Chat("", "test", s => Debug.Write(s));
         }
     }
 }
