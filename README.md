@@ -174,7 +174,7 @@ v0.4 更新了添加 Anki 卡片的功能，想法来源于 [2DIPW/novel2anki](h
 使用的第三方工具与参考资料：
 
 * 形态分析：[taku910/mecab](https://github.com/taku910/mecab) 的 .Net 移植版本 [kekyo/MeCab.DotNet](https://github.com/kekyo/MeCab.DotNet)
-* ChatGPT：[OkGoDoIt/OpenAI-API-dotnet](https://github.com/OkGoDoIt/OpenAI-API-dotnet)
+* ChatGPT：[openai/openai-dotnet](https://github.com/openai/openai-dotnet)
 * [前端页面](https://github.com/ks233/ja-learner-webview)：[WebView2 控件](https://www.nuget.org/packages/Microsoft.Web.WebView2)，Vite + Vue
 * 单词搜索：[MOJi 辞書](https://www.mojidict.com/)
 * 谷歌翻译：参考了 [FilipePS/Traduzir-paginas-web](https://github.com/FilipePS/Traduzir-paginas-web) 的 API 调用方式
