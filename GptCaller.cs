@@ -33,6 +33,7 @@ namespace ja_learner
         public static Conversation CreateTranslateConversation(string text)
         {
             Conversation conversation = api.Chat.CreateConversation();
+            conversation.Model = Program.APP_SETTING.GPT.Model;
             conversation.AppendSystemMessage(Program.APP_SETTING.GPT.TranslatePrompt);
             if (UserConfig.useExtraPrompt)
             {
@@ -45,6 +46,7 @@ namespace ja_learner
         public static Conversation CreateInterpretConversation(string text)
         {
             Conversation conversation = api.Chat.CreateConversation();
+            conversation.Model = Program.APP_SETTING.GPT.Model;
             conversation.AppendSystemMessage(Program.APP_SETTING.GPT.ExplainPrompt);
             if (UserConfig.useExtraPrompt)
             {

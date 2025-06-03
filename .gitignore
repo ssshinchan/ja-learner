@@ -399,3 +399,5 @@ FodyWeavers.xsd
 
 config.txt
 extra_prompts/
+dist_vue
+.vscode
