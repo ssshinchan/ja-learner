@@ -12,7 +12,7 @@ Debug 模式还需要部署并启动 [ks233/ja-learner-webview](https://github.c
 
 1. **打开项目**：在 VS Code 中打开 `ja-learner` 项目。
 
-2. **打开远程容器**：点击左下角的绿色按钮（通常显示为 "><" 或 "打开远程窗口"），然后选择 "Reopen in Container"。(确保Docker已安装并运行, )
+2. **打开远程容器**：点击左下角的绿色按钮（通常显示为 "><" 或 "打开远程窗口"），然后选择 "Reopen in Container"。(确保 Docker 已安装并运行)
 
 3. **等待容器构建**：VS Code 会自动下载并构建 devcontainer，这可能需要一些时间。
 
@@ -33,4 +33,4 @@ Debug 模式还需要部署并启动 [ks233/ja-learner-webview](https://github.c
    mv dist ../ja-learner/bin/Release/net6.0-windows/win-x64
    ```
 
-6. **完成编译**：编译完成后，你可以在 `bin/Release/net6.0-windows/win-x64` 目录下找到编译后的exe可执行文件。
+6. **完成编译**：编译完成后，你可以在 `bin/Release/net6.0-windows/win-x64` 目录下找到编译后的 exe 可执行文件。
