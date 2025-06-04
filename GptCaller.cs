@@ -1,74 +1,70 @@
-﻿using OpenAI_API;
-using OpenAI_API.Chat;
+﻿using OpenAI;
+using OpenAI.Chat;
+using System.ClientModel;
+using System.ClientModel.Primitives;
+using System.Diagnostics;
 using System.Net;
 
 namespace ja_learner
 {
     internal class GptCaller
     {
-        private static OpenAIAPI api;
-
-        private static IHttpClientFactory defaultFactory;
-        private static IHttpClientFactory proxyFactory;
-
+        private static OpenAIClient client;
+        private static OpenAIClientOptions options;
         public static void Initialize()
         {
-            api = new(Program.APP_SETTING.GPT.ApiKey) { ApiUrlFormat = Program.APP_SETTING.GPT.ApiUrl };
-            defaultFactory = api.HttpClientFactory;
-            proxyFactory = new MyHttpClientFactory(Program.APP_SETTING.HttpProxy);
+            options = new()
+            {
+                Endpoint = new Uri(Program.APP_SETTING.GPT.ApiUrl)
+            };
+            Debug.WriteLine(Program.APP_SETTING.GPT.ApiUrl);
+            client = new(
+                new ApiKeyCredential(Program.APP_SETTING.GPT.ApiKey),
+                options
+            );
         }
 
         public static void SetProxy(bool useProxy)
         {
             if (useProxy)
             {
-                api.HttpClientFactory = proxyFactory;
+                HttpClientHandler handler = new()
+                {
+                    Proxy = new WebProxy(new Uri(Program.APP_SETTING.HttpProxy)),
+                };
+                options = new()
+                {
+                    Endpoint = new Uri(Program.APP_SETTING.GPT.ApiUrl),
+                    Transport = new HttpClientPipelineTransport(new HttpClient(handler))
+                };
+                client = new(new ApiKeyCredential(Program.APP_SETTING.GPT.ApiKey), options);
             }
             else
             {
-                api.HttpClientFactory = defaultFactory;
+                options = new()
+                {
+                    Endpoint = new Uri(Program.APP_SETTING.GPT.ApiUrl)
+                };
+                client = new(new ApiKeyCredential(Program.APP_SETTING.GPT.ApiKey), options);
             }
         }
 
-        public static Conversation CreateTranslateConversation(string text)
+        public static async void Chat(string systemPrompt, string userPrompt, Action<string> streamCallback)
         {
-            Conversation conversation = api.Chat.CreateConversation();
-            conversation.AppendSystemMessage(Program.APP_SETTING.GPT.TranslatePrompt);
             if (UserConfig.useExtraPrompt)
             {
-                AddExtraSystemPrompt(conversation);
+                systemPrompt += UserConfig.ExtraPrompt;
             }
-            conversation.AppendUserInput($"{text}");
-            return conversation;
-        }
-
-        public static Conversation CreateInterpretConversation(string text)
-        {
-            Conversation conversation = api.Chat.CreateConversation();
-            conversation.AppendSystemMessage(Program.APP_SETTING.GPT.ExplainPrompt);
-            if (UserConfig.useExtraPrompt)
-            {
-                AddExtraSystemPrompt(conversation);
-            }
-            conversation.AppendUserInput($"{text}");
-            return conversation;
-        }
-
-        private static void AddExtraSystemPrompt(Conversation conversation)
-        {
-            if (UserConfig.ExtraPrompt.Length > 0)
-            {
-                conversation.AppendSystemMessage(UserConfig.ExtraPrompt);
-            }
-        }
-
-        async public static void StreamResponse(Conversation conversation, Action<string> callback)
-        {
             try
             {
-                await foreach (var res in conversation.StreamResponseEnumerableFromChatbotAsync())
+                ChatClient chatClient = client.GetChatClient(Program.APP_SETTING.GPT.Model);
+                AsyncCollectionResult<StreamingChatCompletionUpdate> completionUpdates = chatClient.CompleteChatStreamingAsync(systemPrompt + "\n" + userPrompt);
+                await foreach (StreamingChatCompletionUpdate completionUpdate in completionUpdates)
                 {
-                    callback(res);
+                    if (completionUpdate.ContentUpdate.Count > 0)
+                    {
+                        streamCallback(completionUpdate.ContentUpdate[0].Text);
+                    }
                 }
             }
             catch (Exception ex)
@@ -76,23 +72,17 @@ namespace ja_learner
                 MessageBox.Show(ex.Message);
             }
         }
-    }
 
-    class MyHttpClientFactory : IHttpClientFactory
-    {
-        private string proxy;
-        public MyHttpClientFactory(string proxy)
+        public static async void CreateTranslateConversation(string userPrompt, Action<string> streamCallback)
         {
-            this.proxy = proxy;
+            string systemPrompt = Program.APP_SETTING.GPT.TranslatePrompt;
+            Chat(systemPrompt, userPrompt, streamCallback);
         }
-        HttpClient IHttpClientFactory.CreateClient(string name)
+
+        public static async void CreateInterpretConversation(string userPrompt, Action<string> streamCallback)
         {
-            HttpClientHandler handler = new HttpClientHandler()
-            {
-                Proxy = new WebProxy($"http://{proxy}")
-            };
-            var client = new HttpClient(handler);
-            return client;
+            string systemPrompt = Program.APP_SETTING.GPT.ExplainPrompt;
+            Chat(systemPrompt, userPrompt, streamCallback);
         }
     }
 

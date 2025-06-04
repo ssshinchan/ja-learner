@@ -13,18 +13,15 @@
     </a>
 </div>
 
-
-
 ## 功能介绍
 
 * **语句分析**：用不同样式区分句子成分，为句子中的汉字注音
 * **单词查询**：点击单词一键查询 MOJi 辞書，哪里不会点哪里
-* **参考翻译**：支持谷歌翻译与 ChatGPT 翻译，把握句子整体含义
+* **参考翻译**：支持谷歌翻译与 AI 翻译，把握句子整体含义
 * **片假不留**：在片假名上方显示英语翻译，满屏片假名也不怕
 * **游戏文本分析**：吸附并跟随游戏窗口，配合文本提取工具，实时分析游戏文本
-* **AI 讲解**：调用 ChatGPT 讲解句子中的单词和语法成分
+* **AI 讲解**：调用 AI 讲解句子中的单词和语法成分
 * **添加 Anki 卡片**：快速添加单词卡片，打造自己的单词本
-
 
 ## 使用说明
 
@@ -45,7 +42,6 @@
 
 ![demo](README/demo.gif)
 
-
 ### 窗口吸附
 
 在主窗口的“系统设置”面板中，首先点击“选择窗口”按钮，然后把鼠标移到想要吸附的窗口，点一下左键。此时右边选框中的文字会变成“与 xxx 对齐”，把选框勾上，窗口就吸附到游戏窗口边上了。
@@ -60,11 +56,13 @@
 
 ### 参考翻译
 
-目前支持了谷歌翻译和 GPT 翻译。其中谷歌翻译无需配置，可以免费无限制使用，而 GPT 需要配置 API Key，消耗 API 余额。
+目前支持了谷歌翻译和 GPT 翻译。其中“谷歌翻译”无需配置，可以免费无限制使用，而 GPT 需要配置 API Key，消耗 API 余额。
 
 #### 谷歌翻译 & 谷歌生草机
 
-这是两个不同的接口，“谷歌翻译”会得到与网页版谷歌翻译相同的翻译结果，“谷歌生草机”的翻译结果与网页版不同，质量普遍低于网页版。
+这是两个不同的接口，“谷歌翻译”会得到与网页版谷歌翻译相同的翻译结果，但不是正规 API，以后可能会失效。
+
+“谷歌生草机”的翻译结果与网页版不同，质量普遍低于网页版。
 
 > 如果你的网络环境无法访问谷歌翻译，可以尝试使用 [GoodCoder666/GoogleTranslate_IPFinder](https://github.com/GoodCoder666/GoogleTranslate_IPFinder) 等工具扫描可用 IP，然后修改 HOST。
 
@@ -75,16 +73,33 @@
 ```js
 "GPT": {
     "ApiKey": "sk-xxx",
-    "ApiUrl": "https://api.openai.com/{0}/{1}", // 实际调用为https://api.openai.com/v1/chat/completions
-    "ExtraPromptDir": "extra_prompts",		// 额外的Prompt，比如指定某些角色名字怎么翻译
-    "TranslatePrompt": "...",			// 翻译Prompt
-    "ExplainPrompt": "..."			// 分析Prompt
+    "ApiUrl": "https://api.openai.com/v1", // 实际调用为 https://api.openai.com/v1/chat/completions
+    "Model": "gpt-4o-mini", // 兼容 OpenAI API 的模型
+    "ExtraPromptDir": "extra_prompts", // 额外的 Prompt，比如指定某些角色名字怎么翻译
+    "TranslatePrompt": "...", // 翻译 Prompt
+    "ExplainPrompt": "..." // 分析 Prompt
 }
 ```
 
-一般只需要配置 ApiKey 就行，如果使用非官方 API 请按照格式修改 ApiUrl，如果对默认的 Prompt 不满意也可以自行更改。
+除了 ChatGPT，也支持其它兼容 OpenAI API 的模型，比如 Ollama、Deepseek 等。
 
-配置好 ApiKey 就可以使用 ChatGPT 翻译和解说文本了。
+Ollama：
+
+```js
+    "ApiKey": "whatever",
+    "ApiUrl": "http://localhost:11434/v1",
+    "Model": "qwen2.5:3b",
+```
+
+Deepseek：
+
+```js
+    "ApiKey": "sk-xxx",
+    "ApiUrl": "https://api.deepseek.com/v1", 
+    "Model": "deepseek-chat",
+```
+
+如果对默认的 Prompt 不满意也可以自行更改，配置好 ApiKey 就可以使用 AI 翻译和解说文本了。
 
 ![gpt](README/gpt.gif)
 
@@ -106,12 +121,12 @@ Anki 是一款经典的记忆卡片软件，它的设计理念影响了很多背
 "AnkiEnabled": true,
 "Anki": {
     "AnkiConnectUrl": "http://127.0.0.1:8765", // AnkiConnect 默认端口
-    "Deck": "test",			// 添加卡片的目标牌组
-    "Model": "ja-learner",		// 卡片的模板名
-    "FieldNames":{			// 模板中的字段
-        "Word": "单词",			// 存储单词的字段名
-        "Example": "例句",		// 存储例句的字段名
-        "Explain": "解释"		// 存储解释的字段名
+    "Deck": "test",            // 添加卡片的目标牌组
+    "Model": "ja-learner",        // 卡片的模板名
+    "FieldNames":{            // 模板中的字段
+        "Word": "单词",            // 存储单词的字段名
+        "Example": "例句",        // 存储例句的字段名
+        "Explain": "解释"        // 存储解释的字段名
     }
 }
 ```
@@ -126,7 +141,6 @@ Anki 是一款经典的记忆卡片软件，它的设计理念影响了很多背
   - 编辑卡牌模板的显示方式，比如把单词和例句显示在正面，解释显示在背面
 - 将 `Deck` 以及下面的几项修改为对应的牌组名称、模板名称、字段名称。
   - 注意核对牌组与字段名称，如果牌组/模板/字段不存在，或者名称不一致，将无法添加卡片。
-
 
 完成配置后只要在词典页面点击“添加到Anki”，就可以一键将当前文本例句、MOJi 单词和解释创建为新卡片，添加到卡组中。
 
@@ -153,17 +167,26 @@ v0.4 更新了添加 Anki 卡片的功能，想法来源于 [2DIPW/novel2anki](h
 使用的第三方工具与参考资料：
 
 * 形态分析：[taku910/mecab](https://github.com/taku910/mecab) 的 .Net 移植版本 [kekyo/MeCab.DotNet](https://github.com/kekyo/MeCab.DotNet)
-* ChatGPT：[OkGoDoIt/OpenAI-API-dotnet](https://github.com/OkGoDoIt/OpenAI-API-dotnet)
+* ChatGPT：[openai/openai-dotnet](https://github.com/openai/openai-dotnet)
 * [前端页面](https://github.com/ks233/ja-learner-webview)：[WebView2 控件](https://www.nuget.org/packages/Microsoft.Web.WebView2)，Vite + Vue
 * 单词搜索：[MOJi 辞書](https://www.mojidict.com/)
 * 谷歌翻译：参考了 [FilipePS/Traduzir-paginas-web](https://github.com/FilipePS/Traduzir-paginas-web) 的 API 调用方式
 * Anki：[AnkiConnect](https://ankiweb.net/shared/info/2055492159)
 * 其它参考资源：[taishi-i/awesome-japanese-nlp-resources](https://github.com/taishi-i/awesome-japanese-nlp-resources)
 
+## 作者的其它项目
+
+两个开箱即用的网页小工具，都直接部署在 github.io 上，有兴趣的也可以试试看。
+
+- [ks233/video-annotator: ▶️ 纯前端实现，轻便实用的本地视频笔记 / 游戏录像复盘 / 影视音乐分析工具](https://github.com/ks233/video-annotator)
+- [ks233/color-study-tool: 一个巨简陋的网页端色彩收集器，用于研究色彩组合的 HSV 规律。](https://github.com/ks233/color-study-tool)
+
 ## 贡献者
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+
 <!-- prettier-ignore-start -->
+
 <!-- markdownlint-disable -->
 
 <table>
@@ -177,6 +200,7 @@ v0.4 更新了添加 Anki 卡片的功能，想法来源于 [2DIPW/novel2anki](h
 </table>
 
 <!-- markdownlint-restore -->
+
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->

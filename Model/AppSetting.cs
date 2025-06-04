@@ -13,6 +13,9 @@ public class GPTOptions
 {
     public string ApiKey { get; set; } = string.Empty;
     public string ApiUrl { get; set; } = string.Empty;
+
+    public string Model { get; set; } = string.Empty;
+
     public string ExtraPromptDir { get; set; } = string.Empty;
     public string TranslatePrompt { get; set; } = string.Empty;
     public string ExplainPrompt { get; set; } = string.Empty;

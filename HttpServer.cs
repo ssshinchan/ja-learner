@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.NetworkInformation;
-using System.Security.Policy;
+using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ja_learner
 {
@@ -24,7 +20,7 @@ namespace ja_learner
             proxyDict["/googletrans_api"] = "https://translate.googleapis.com";
             proxyDict["/googletrans"] = "https://translate.googleapis.com/translate_a";
             proxyDict["/ankiconnect"] = Program.APP_SETTING.Anki.AnkiConnectUrl;
-
+            proxyDict["/goog_v2"] = "https://translate-pa.googleapis.com/v1/translateHtml";
             direct = HttpClient.DefaultProxy;
             if(Program.APP_SETTING.HttpProxy != string.Empty)
             {
@@ -49,7 +45,8 @@ namespace ja_learner
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
+                    MessageBox.Show(ex.Message);
+                    Application.Exit();
                 }
             });
         }
